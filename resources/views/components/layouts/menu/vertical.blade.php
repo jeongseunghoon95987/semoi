@@ -12,6 +12,22 @@
       <a class="menu-link" href="{{ route('dashboard') }}" wire:navigate>{{ __('Dashboard') }}</a>
     </li>
 
+    <!-- Event Sources -->
+    <li class="menu-item {{ request()->is('admin.event-sources*') ? 'active' : '' }}">
+      <a class="menu-link" href="{{ route('admin.event-sources.index') }}" wire:navigate>
+        <i class="menu-icon tf-icons bx bx-collection"></i>
+        <div class="text-truncate">{{ __('Event Sources') }}</div>
+      </a>
+    </li>
+
+    <!-- Events -->
+    <li class="menu-item {{ request()->is('admin.events*') ? 'active' : '' }}">
+      <a class="menu-link" href="{{ route('admin.events.index') }}" wire:navigate>
+        <i class="menu-icon tf-icons bx bx-calendar"></i>
+        <div class="text-truncate">{{ __('Events') }}</div>
+      </a>
+    </li>
+
     <!-- Settings -->
     <li class="menu-item {{ request()->is('settings/*') ? 'active open' : '' }}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
