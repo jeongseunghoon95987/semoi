@@ -7,7 +7,7 @@
                     <h5 class="card-title mb-0">새 이벤트 소스 추가</h5>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('event-sources.store') }}" method="POST">
+                    <form action="{{ route('admin.event-sources.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
                             <label for="name" class="form-label">이름</label>
@@ -69,7 +69,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">저장</button>
-                        <a href="{{ route('event-sources.index') }}" class="btn btn-secondary">목록으로</a>
+                        <a href="{{ route('admin.event-sources.index') }}" class="btn btn-secondary">목록으로</a>
                     </form>
                 </div>
             </div>

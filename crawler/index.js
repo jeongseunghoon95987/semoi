@@ -58,12 +58,22 @@ const LARAVEL_API_BASE_URL = 'http://127.0.0.1:8080'; // /api 제거
             return formatDateToISO(date);
           }
 
-          // '월.일' 형식 처리 (예: 8.18)
-          const monthDayMatch = dateStr.match(/(\d{1,2})\.(\d{1,2})/);
-          if (monthDayMatch) {
+          // 'MM/DD' 형식 처리 (예: 7/10, 8/13)
+          const monthDaySlashMatch = dateStr.match(/(\d{1,2})\/(\d{1,2})/);
+          if (monthDaySlashMatch) {
             const currentYear = new Date().getFullYear();
-            const month = parseInt(monthDayMatch[1]) - 1;
-            const day = parseInt(monthDayMatch[2]);
+            const month = parseInt(monthDaySlashMatch[1]) - 1;
+            const day = parseInt(monthDaySlashMatch[2]);
+            const date = new Date(currentYear, month, day);
+            return formatDateToISO(date);
+          }
+
+          // '월.일' 형식 처리 (예: 8.18)
+          const monthDayDotMatch = dateStr.match(/(\d{1,2})\.(\d{1,2})/);
+          if (monthDayDotMatch) {
+            const currentYear = new Date().getFullYear();
+            const month = parseInt(monthDayDotMatch[1]) - 1;
+            const day = parseInt(monthDayDotMatch[2]);
             const date = new Date(currentYear, month, day);
             return formatDateToISO(date);
           }
@@ -80,12 +90,30 @@ const LARAVEL_API_BASE_URL = 'http://127.0.0.1:8080'; // /api 제거
           return formatDateToISO(date);
         }
 
-        // 날짜 범위 문자열을 파싱하는 헬퍼 함수 (예: 8.18 (월) ~ 12.15 (월))
+        // 날짜 범위 문자열을 파싱하는 헬퍼 함수 (예: 8.18 (월) ~ 12.15 (월), 7/10~8/13)
         function parseDateRange(dateRangeStr) {
           if (!dateRangeStr) return { start: null, end: null };
 
-          // 요일 정보 제거 (월), (화), (수) 등
-          const cleanedStr = dateRangeStr.replace(/\s*\([^)]+\)\s*/g, ' ').trim();
+          // 괄호 안의 내용 (요일 정보 등) 제거
+          const cleanedStr = dateRangeStr.replace(/\s*\([^)]+\)\s*/g, '').trim();
+
+          // 'YYYY년 MM월 DD일' 형식의 날짜 범위 처리 (예: 2025년 7월 10일~2025년 8월 13일)
+          const fullDateRangeMatch = cleanedStr.match(/(\d{4}년 \d{1,2}월 \d{1,2}일)~(\d{4}년 \d{1,2}월 \d{1,2}일)/);
+          if (fullDateRangeMatch) {
+            return {
+              start: parseDateString(fullDateRangeMatch[1]),
+              end: parseDateString(fullDateRangeMatch[2])
+            };
+          }
+
+          // 'MM/DD~MM/DD' 형식의 날짜 범위 처리 (예: 7/10~8/13)
+          const slashDateRangeMatch = cleanedStr.match(/(\d{1,2}\/\d{1,2})~(\d{1,2}\/\d{1,2})/);
+          if (slashDateRangeMatch) {
+            return {
+              start: parseDateString(slashDateRangeMatch[1]),
+              end: parseDateString(slashDateRangeMatch[2])
+            };
+          }
 
           const parts = cleanedStr.split('~').map(p => p.trim());
           let startDate = null;
